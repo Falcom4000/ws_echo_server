@@ -20,7 +20,7 @@
 
 const char *TAG = "ws_echo_server";
 static const char *TAG1 = "Servo";
-const int stoptime = 300;
+const int stoptime = 600;
 #define INPUT_PIN 34  // Define input pin number
 
 // Initialize GPIO pin

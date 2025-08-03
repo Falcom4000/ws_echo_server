@@ -35,24 +35,29 @@ static void gpio_init(void) {
     
     ESP_LOGI(TAG, "GPIO initialized: pin %d", INPUT_PIN);
 }
-
+static void stopRoll(void){
+    iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 0, 90);
+    iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 1, 90);
+    ESP_LOGI(TAG1, "STOP STOP STOP STOP");
+}
 static void posRoll(void){
     iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 0, 0);
     iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 1, 180);
     ESP_LOGI(TAG1, "++++++++++++++");
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+    stopRoll();
+    
 }
 
 static void negRoll(void){
     iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 0, 180);
     iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 1, 0);
     ESP_LOGI(TAG1, "---------------");
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+    stopRoll();
 }
 
-static void stopRoll(void){
-    iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 0, 90);
-    iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 1, 90);
-    ESP_LOGI(TAG1, "STOP STOP STOP STOP");
-}
+
 
 static void servo_init(void)
 {
@@ -112,7 +117,7 @@ static void pin_read_task(void *pvParameter) {
         if (pin_value == 1) {
             posRoll();
         } else {
-            stopRoll();
+            negRoll();
         }
         
         // Wait 0.5 seconds

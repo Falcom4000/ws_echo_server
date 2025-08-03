@@ -101,7 +101,7 @@ static void servo_init(void)
     // Initialize the servo
     iot_servo_init(LEDC_LOW_SPEED_MODE, &servo_cfg1);
     iot_servo_init(LEDC_LOW_SPEED_MODE, &servo_cfg2);
-    stopRoll()
+    stopRoll();
     ESP_LOGI(TAG1, "Succeeded in initialize servo");
 
 }

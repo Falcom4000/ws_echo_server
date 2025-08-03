@@ -20,7 +20,6 @@
 
 const char *TAG = "ws_echo_server";
 static const char *TAG1 = "Servo";
-static bool dir = 0; //  =0, +; = 1, -
 
 #define INPUT_PIN 34  // Define input pin number
 
@@ -38,21 +37,18 @@ static void gpio_init(void) {
 }
 
 static void posRoll(void){
-    dir = 0;
     iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 0, 0);
     iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 1, 180);
     ESP_LOGI(TAG1, "++++++++++++++");
 }
 
 static void negRoll(void){
-    dir = 1;
     iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 0, 180);
     iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 1, 0);
     ESP_LOGI(TAG1, "---------------");
 }
 
 static void stopRoll(void){
-    dir = 1;
     iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 0, 90);
     iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 1, 90);
     ESP_LOGI(TAG1, "STOP STOP STOP STOP");
@@ -100,16 +96,7 @@ static void servo_init(void)
     // Initialize the servo
     iot_servo_init(LEDC_LOW_SPEED_MODE, &servo_cfg1);
     iot_servo_init(LEDC_LOW_SPEED_MODE, &servo_cfg2);
-    if (dir == 0){
-        iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 0, 0);
-        iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 1, 180);
-        ESP_LOGI(TAG1, "++++++++++++++");
-    }
-    else if (dir == 1) {
-        iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 0, 180);
-        iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 1, 0);
-        ESP_LOGI(TAG1, "---------------");
-    }
+    stopRoll()
     ESP_LOGI(TAG1, "Succeeded in initialize servo");
 
 }
@@ -123,13 +110,9 @@ static void pin_read_task(void *pvParameter) {
         ESP_LOGI(TAG, "Pin %d value: %d", INPUT_PIN, pin_value);
         
         if (pin_value == 1) {
-            if (dir != 0) {
-                posRoll();
-            }
+            posRoll();
         } else {
-            if (dir != 1) {
-                stopRoll();
-            }
+            stopRoll();
         }
         
         // Wait 0.5 seconds

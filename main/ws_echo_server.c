@@ -51,6 +51,13 @@ static void negRoll(void){
     ESP_LOGI(TAG1, "---------------");
 }
 
+static void stopRoll(void){
+    dir = 1;
+    iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 0, 90);
+    iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 1, 90);
+    ESP_LOGI(TAG1, "STOP STOP STOP STOP");
+}
+
 static void servo_init(void)
 {
     
@@ -121,7 +128,7 @@ static void pin_read_task(void *pvParameter) {
             }
         } else {
             if (dir != 1) {
-                negRoll();
+                stopRoll();
             }
         }
         

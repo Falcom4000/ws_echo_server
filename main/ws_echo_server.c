@@ -20,7 +20,7 @@
 
 const char *TAG = "ws_echo_server";
 static const char *TAG1 = "Servo";
-
+const int stoptime = 200;
 #define INPUT_PIN 34  // Define input pin number
 
 // Initialize GPIO pin
@@ -44,7 +44,7 @@ static void posRoll(void){
     iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 0, 0);
     iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 1, 180);
     ESP_LOGI(TAG1, "++++++++++++++");
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+    vTaskDelay(stoptime / portTICK_PERIOD_MS);
     stopRoll();
     
 }
@@ -53,7 +53,7 @@ static void negRoll(void){
     iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 0, 180);
     iot_servo_write_angle(LEDC_LOW_SPEED_MODE, 1, 0);
     ESP_LOGI(TAG1, "---------------");
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+    vTaskDelay(stoptime / portTICK_PERIOD_MS);
     stopRoll();
 }
 
@@ -109,15 +109,20 @@ static void servo_init(void)
 // Read pin and control servos task
 static void pin_read_task(void *pvParameter) {
     int pin_value;
+    int prev_pin_value = -1;  // Initialize to invalid value to ensure first read triggers action
     
     while (1) {
         pin_value = gpio_get_level(INPUT_PIN);
         ESP_LOGI(TAG, "Pin %d value: %d", INPUT_PIN, pin_value);
         
-        if (pin_value == 1) {
-            posRoll();
-        } else {
-            negRoll();
+        // Only execute servo commands when pin value changes
+        if (pin_value != prev_pin_value) {
+            if (pin_value == 1) {
+                posRoll();
+            } else {
+                negRoll();
+            }
+            prev_pin_value = pin_value;  // Update previous value
         }
         
         // Wait 0.5 seconds

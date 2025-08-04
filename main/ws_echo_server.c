@@ -109,7 +109,7 @@ static void servo_init(void)
 // Read pin and control servos task
 static void pin_read_task(void *pvParameter) {
     int pin_value;
-    int prev_pin_value = -1;  // Initialize to invalid value to ensure first read triggers action
+    int prev_pin_value = 0;  // Initialize to invalid value to ensure first read triggers action
     
     while (1) {
         pin_value = gpio_get_level(INPUT_PIN);
